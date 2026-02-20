@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Archives
+*.zip
+
+# Helm packages
+*.tgz
+
+# OS / Editor
+.DS_Store
+.vscode/

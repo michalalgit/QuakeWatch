@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "quakewatch.fullname" . }}
+  labels:
+    app: {{ include "quakewatch.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "quakewatch.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "quakewatch.name" . }}
+    spec:
+      containers:
+        - name: quakewatch
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "quakewatch.fullname" . }}-config
+                  key: APP_ENV
+
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "quakewatch.fullname" . }}-secret
+                  key: API_KEY
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
