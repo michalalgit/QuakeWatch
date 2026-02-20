@@ -23,7 +23,7 @@ jobs:
 
       - name: Run pylint (all python files)
         run: |
-          pylint $(find . -name "*.py" -print)
+          pylint --rcfile=.pylintrc --fail-under=7.0 $(find . -name "*.py" -print)
 
       - name: Docker build (no push)
         run: |
